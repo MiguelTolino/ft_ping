@@ -8,15 +8,16 @@ DEBUG_FLAGS = -g3 -fsanitize=address
 RM = rm -f
 
 # Source files
-SRCS = src/main.c \
-       src/ping.c \
-       src/socket.c \
-       src/packet.c \
-       src/utils.c
+SRCS = srcs/main.c \
+       srcs/ping.c
+
+# Build directory
+BUILD_DIR = build
+OBJS_DIR = $(BUILD_DIR)/obj
 
 # Object files and includes
-OBJS = $(SRCS:.c=.o)
-INCLUDES = -I./includes
+OBJS = $(SRCS:%.c=$(OBJS_DIR)/%.o)
+INCLUDES = -I includes
 
 # Installation paths
 PREFIX = /usr/local
@@ -36,41 +37,45 @@ CROSS = $(RED)✗$(RESET)
 ARROW = $(BLUE)➜$(RESET)
 
 # Default target
-all: $(NAME)
+all: $(BUILD_DIR)/$(NAME)
+
+# Create build directories
+$(BUILD_DIR):
+	@mkdir -p $(BUILD_DIR)
+	@mkdir -p $(OBJS_DIR)
+	@mkdir -p $(OBJS_DIR)/srcs
 
 # Main compilation
-$(NAME): $(OBJS)
+$(BUILD_DIR)/$(NAME): $(OBJS)
 	@echo "$(BOLD)$(ARROW) Compiling $(NAME)...$(RESET)"
-	@$(CC) $(CFLAGS) $(INCLUDES) $(OBJS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(OBJS)
 	@echo "$(CHECK) $(GREEN)$(NAME) successfully compiled!$(RESET)"
 
 # Object file compilation
-%.o: %.c
+$(OBJS_DIR)/%.o: %.c | $(BUILD_DIR)
 	@echo "$(ARROW) Compiling $<"
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 # Debug build
 debug: CFLAGS += $(DEBUG_FLAGS)
-debug: fclean $(NAME)
+debug: fclean $(BUILD_DIR)/$(NAME)
 	@echo "$(CHECK) $(GREEN)Debug build created!$(RESET)"
 
 # Clean object files
 clean:
 	@echo "$(ARROW) Cleaning object files..."
-	@$(RM) $(OBJS)
+	@$(RM) -r $(BUILD_DIR)
 	@echo "$(CHECK) $(GREEN)Clean complete!$(RESET)"
 
 # Full clean
 fclean: clean
-	@echo "$(ARROW) Removing $(NAME)..."
-	@$(RM) $(NAME)
 	@echo "$(CHECK) $(GREEN)Full clean complete!$(RESET)"
 
 # Install program
-install: $(NAME)
+install: $(BUILD_DIR)/$(NAME)
 	@echo "$(ARROW) Installing $(NAME) to $(BINDIR)..."
 	@sudo mkdir -p $(BINDIR)
-	@sudo cp $(NAME) $(BINDIR)/
+	@sudo cp $(BUILD_DIR)/$(NAME) $(BINDIR)/
 	@echo "$(CHECK) $(GREEN)$(NAME) successfully installed!$(RESET)"
 
 # Uninstall program
@@ -87,8 +92,8 @@ help:
 	@echo "$(BOLD)Available targets:$(RESET)"
 	@echo "  $(GREEN)all$(RESET)        - Build $(NAME)"
 	@echo "  $(GREEN)debug$(RESET)      - Build $(NAME) with debug flags"
-	@echo "  $(GREEN)clean$(RESET)      - Remove object files"
-	@echo "  $(GREEN)fclean$(RESET)     - Remove object files and $(NAME)"
+	@echo "  $(GREEN)clean$(RESET)      - Remove build directory"
+	@echo "  $(GREEN)fclean$(RESET)     - Remove build directory"
 	@echo "  $(GREEN)re$(RESET)         - Rebuild everything"
 	@echo "  $(GREEN)install$(RESET)    - Install $(NAME) to $(BINDIR)"
 	@echo "  $(GREEN)uninstall$(RESET)  - Remove $(NAME) from $(BINDIR)"

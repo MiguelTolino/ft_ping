@@ -8,4 +8,4 @@ sudo apt install net-tools      # For ifconfig, netstat (optional, iproute2 is n
 sudo apt install iproute2       # For ip addr, ss
 sudo apt install dnsutils       # For nslookup, dig (useful for testing)
 sudo apt install tcpdump        # Crucial for debugging network packets
-sudo apt install inetutils      # For ping, telnet, ftp and other network tools
+sudo apt install inetutils-ping # For ping command
