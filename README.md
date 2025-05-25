@@ -5,10 +5,12 @@ A recreation of the Linux ping command in C. This project implements the core fu
 ## ✨ Features
 
 - 📡 Send ICMP ECHO_REQUEST packets to network hosts
-- 📊 Display round-trip time statistics
+- 📊 Display round-trip time statistics including min/avg/max/stddev
 - ⚙️ Support for various command-line options:
   - `-c`: Stop after sending count packets
-  - `-t`: Set the IP Time To Live
+  - `-t`: Set the IP Time To Live (default: 64)
+  - `-w`: Set timeout in seconds
+  - `-i`: Set interval between packets in seconds (default: 1)
   - `-v`: Verbose output
   - `-V`: Display version information
   - `-?`: Display help message
@@ -20,6 +22,7 @@ A recreation of the Linux ping command in C. This project implements the core fu
 - 🛠️ GCC compiler
 - 🔧 Make
 - 🔐 Root privileges (for raw socket operations)
+- 🐧 Linux operating system (not supported on macOS)
 
 ### 🏗️ Building
 
@@ -57,12 +60,26 @@ ft_ping -c 5 8.8.8.8
 # Set TTL to 32
 ft_ping -t 32 google.com
 
+# Set timeout to 5 seconds
+ft_ping -w 5 google.com
+
+# Set interval between packets to 2 seconds
+ft_ping -i 2 google.com
+
 # Verbose output
 ft_ping -v 8.8.8.8
 
 # Display version
 ft_ping -V
 ```
+
+## 📦 Packet Details
+
+- Default packet size: 64 bytes (56 bytes data + 8 bytes ICMP header)
+- Maximum packet size: 65507 bytes (for receiving responses)
+- Default TTL: 64
+- Default interval: 1 second
+- Default timeout: None (runs until interrupted)
 
 ## 🧪 Testing
 
@@ -115,6 +132,7 @@ The program handles various error conditions:
 - 🌐 Network connectivity issues
 - 🚫 Invalid command-line options
 - 🔒 Permission issues (requires root for raw sockets)
+- ⏱️ Timeout handling for packet reception
 
 ## 🤝 Contributing
 
