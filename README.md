@@ -1,4 +1,4 @@
-# 🚀 ft_ping
+# 🛰️ ft_ping
 
 A recreation of the Linux ping command in C. This project implements the core functionality of the ping utility, allowing users to test network connectivity by sending ICMP ECHO_REQUEST packets to network hosts.
 
@@ -18,6 +18,12 @@ A recreation of the Linux ping command in C. This project implements the core fu
 ## 🛠️ Installation
 
 ### 📋 Prerequisites
+
+- 📦 Required packages:
+```bash
+chmod +x install_dependencies.sh
+./install_dependencies.sh
+``` 
 
 - 🛠️ GCC compiler
 - 🔧 Make
