@@ -8,8 +8,9 @@ DEBUG_FLAGS = -g3 -fsanitize=address
 RM = rm -f
 
 # Source files
-SRCS = srcs/main.c \
-       srcs/ping.c
+SRCS = $(wildcard srcs/*.c) \
+       $(wildcard srcs/network/*.c) \
+       $(wildcard srcs/utils/*.c)
 
 # Build directory
 BUILD_DIR = build
@@ -44,6 +45,8 @@ $(BUILD_DIR):
 	@mkdir -p $(BUILD_DIR)
 	@mkdir -p $(OBJS_DIR)
 	@mkdir -p $(OBJS_DIR)/srcs
+	@mkdir -p $(OBJS_DIR)/srcs/network
+	@mkdir -p $(OBJS_DIR)/srcs/utils
 
 # Main compilation
 $(BUILD_DIR)/$(NAME): $(OBJS)
