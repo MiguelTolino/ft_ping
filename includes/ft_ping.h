@@ -51,6 +51,7 @@ typedef struct s_ping {
 
 // Funciones principales
 void    init_ping(t_ping *ping, t_ping_args *args);
+void    cleanup_ping(t_ping *ping);
 void    setup_socket(t_ping *ping);
 void    send_packet(t_ping *ping);
 void    receive_packet(t_ping *ping);

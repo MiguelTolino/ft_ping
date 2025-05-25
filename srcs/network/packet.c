@@ -180,4 +180,10 @@ void receive_packet(t_ping *ping)
         printf("\n");
         return;
     }
+}
+
+void cleanup_ping(t_ping *ping)
+{
+    if (ping->sockfd >= 0)
+        close(ping->sockfd);
 } 

@@ -48,6 +48,7 @@ void signal_handler(int signum)
     if (signum == SIGINT)
     {
         print_statistics(&g_ping);
+        cleanup_ping(&g_ping);
         exit(0);
     }
 }
@@ -183,6 +184,7 @@ void run_ping_loop(t_ping *ping)
         if (ping->count > 0 && ping->packets_sent >= ping->count)
         {
             print_statistics(ping);
+            cleanup_ping(ping);
             exit(0);
         }
 
@@ -201,6 +203,7 @@ void run_ping_loop(t_ping *ping)
             if (elapsed >= timeout_ms)
             {
                 print_statistics(ping);
+                cleanup_ping(ping);
                 exit(0);
             }
 
@@ -212,6 +215,7 @@ void run_ping_loop(t_ping *ping)
             {
                 usleep(remaining * 1000);
                 print_statistics(ping);
+                cleanup_ping(ping);
                 exit(0);
             }
         }
@@ -241,5 +245,7 @@ int main(int argc, char **argv)
     // Bucle principal de ping
     run_ping_loop(&g_ping);
 
+    // Cleanup before exit
+    cleanup_ping(&g_ping);
     return (0);
 } 
