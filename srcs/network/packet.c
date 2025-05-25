@@ -65,6 +65,10 @@ void send_packet(t_ping *ping)
     dest_addr.sin_family = AF_INET;
     dest_addr.sin_addr.s_addr = inet_addr(ping->ip);
 
+    if (ping->verbose)
+        printf("Sending ICMP packet to %s (seq=%d, id=%d)\n",
+               ping->ip, ping->packets_sent, icmp->un.echo.id);
+
     // Enviar el paquete
     if (sendto(ping->sockfd, packet, PACKET_SIZE, 0,
                (struct sockaddr *)&dest_addr, sizeof(dest_addr)) < 0)
@@ -92,7 +96,12 @@ void receive_packet(t_ping *ping)
     if (bytes_received < 0)
     {
         if (errno == EAGAIN || errno == EWOULDBLOCK)
-            printf("Request timeout for icmp_seq %d\n", ping->packets_sent - 1);
+        {
+            if (ping->verbose)
+                printf("Timeout waiting for ICMP reply (seq=%d)\n", ping->packets_sent - 1);
+            else
+                printf("Request timeout for icmp_seq %d\n", ping->packets_sent - 1);
+        }
         return;
     }
 
@@ -101,6 +110,10 @@ void receive_packet(t_ping *ping)
     // Procesar el paquete recibido
     ip = (struct iphdr *)packet;
     icmp = (struct icmphdr *)(packet + (ip->ihl << 2));
+
+    if (ping->verbose)
+        printf("Received %d bytes from %s: type=%d code=%d\n",
+               bytes_received, inet_ntoa(from.sin_addr), icmp->type, icmp->code);
 
     if (icmp->type == ICMP_ECHOREPLY && icmp->un.echo.id == (getpid() & 0xFFFF))
     {
@@ -116,5 +129,10 @@ void receive_packet(t_ping *ping)
         printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.3f ms\n",
                bytes_received - (ip->ihl << 2), inet_ntoa(from.sin_addr),
                icmp->un.echo.sequence, ip->ttl, time_diff);
+    }
+    else if (ping->verbose)
+    {
+        printf("Unexpected ICMP packet: type=%d code=%d id=%d (expected id=%d)\n",
+               icmp->type, icmp->code, icmp->un.echo.id, getpid() & 0xFFFF);
     }
 } 

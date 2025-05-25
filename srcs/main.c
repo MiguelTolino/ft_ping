@@ -43,11 +43,36 @@ void setup_signal_handler(void)
 
 int validate_arguments(int argc, char **argv)
 {
-    if (argc != 2 || !argv[1] || !*argv[1])
+    int i;
+    char *host = NULL;
+
+    for (i = 1; i < argc; i++)
     {
+        if (argv[i][0] == '-')
+        {
+            if (argv[i][1] == 'v')
+                g_ping.verbose = 1;
+            else if (argv[i][1] == '?')
+                print_usage();
+            else
+            {
+                printf("ft_ping: invalid option -- '%c'\n", argv[i][1]);
+                print_usage();
+                return (1);
+            }
+        }
+        else
+            host = argv[i];
+    }
+
+    if (!host)
+    {
+        printf("ft_ping: missing host operand\n");
         print_usage();
         return (1);
     }
+
+    g_ping.host = host;
     return (0);
 }
 
@@ -66,8 +91,9 @@ int main(int argc, char **argv)
     if (validate_arguments(argc, argv))
         return (1);
 
-    // Inicializar estructura ping
-    init_ping(&g_ping, argv[1]);
+    // If help was requested, validate_arguments would have called print_usage()
+    // and exited, so we only reach here if we have a valid host
+    init_ping(&g_ping, g_ping.host);
 
     // Configurar manejador de señales
     setup_signal_handler();

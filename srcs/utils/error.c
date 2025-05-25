@@ -9,8 +9,13 @@ void error_exit(const char *msg)
 void print_usage(void)
 {
     const char *usage =
-        "ping: missing host operand\n"
-        "Try 'ping --help' or 'ping --usage' for more information.\n";
+        "Usage: ft_ping [OPTIONS] HOST\n"
+        "Send ICMP ECHO_REQUEST packets to network hosts.\n\n"
+        "Options:\n"
+        "  -v    Verbose output\n"
+        "  -?    Display this help message\n\n"
+        "Arguments:\n"
+        "  HOST   The host to ping\n";
     printf("%s", usage);
-    exit(1);
+    exit(0);
 } 
