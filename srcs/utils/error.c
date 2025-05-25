@@ -12,15 +12,15 @@ void print_usage(void)
         "Usage: ft_ping [OPTIONS] HOST\n"
         "Send ICMP ECHO_REQUEST packets to network hosts.\n\n"
         "Options:\n"
-        "  -v    Verbose output\n"
-        "  -c    Stop after sending count packets\n"
-        "  -t    Set TTL\n"
-        "  -w    Stop after N seconds\n"
-        "  -i    Wait N seconds between sending each packet\n"
-        "  -V    Display version information\n"
-        "  -?    Display this help message\n\n"
+        "  -v, --verbose    Verbose output\n"
+        "  -V, --version    Display version information\n"
+        "  -c, --count N    Stop after sending N packets\n"
+        "  -t, --ttl N      Set TTL to N\n"
+        "  -w, --timeout N  Stop after N seconds\n"
+        "  -i, --interval N Wait N seconds between sending each packet\n"
+        "  -?, --help       Display this help message\n\n"
         "Arguments:\n"
-        "  HOST   The host to ping\n";
+        "  HOST             The host to ping\n";
     printf("%s", usage);
     exit(0);
 }

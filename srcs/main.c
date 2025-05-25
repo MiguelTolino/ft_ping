@@ -1,7 +1,19 @@
 #include "../includes/ft_ping.h"
 #include <ctype.h>
+#include <getopt.h>
 
 t_ping g_ping;
+
+static struct option long_options[] = {
+    {"verbose", no_argument, 0, 'v'},
+    {"version", no_argument, 0, 'V'},
+    {"count", required_argument, 0, 'c'},
+    {"ttl", required_argument, 0, 't'},
+    {"timeout", required_argument, 0, 'w'},
+    {"interval", required_argument, 0, 'i'},
+    {"help", no_argument, 0, '?'},
+    {0, 0, 0, 0}
+};
 
 void print_statistics(t_ping *ping)
 {
@@ -99,6 +111,7 @@ static int validate_interval(t_ping_args *args, int value)
 int validate_arguments(int argc, char **argv, t_ping_args *args)
 {
     int opt;
+    int option_index = 0;
     
     // Initialize args with default values
     memset(args, 0, sizeof(t_ping_args));
@@ -111,7 +124,7 @@ int validate_arguments(int argc, char **argv, t_ping_args *args)
     // Reset getopt for multiple calls
     optind = 1;
     
-    while ((opt = getopt(argc, argv, "vVc:t:w:i:?")) != -1)
+    while ((opt = getopt_long(argc, argv, "vVc:w:i:?", long_options, &option_index)) != -1)
     {
         switch (opt)
         {
