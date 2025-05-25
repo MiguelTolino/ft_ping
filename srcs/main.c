@@ -52,13 +52,53 @@ void setup_signal_handler(void)
         error_exit("Failed to set up signal handler");
 }
 
+static int validate_ttl(t_ping_args *args, int value)
+{
+    if (value <= 0 || value > 255)
+    {
+        printf("ft_ping: ttl %d out of range\n", value);
+        return (1);
+    }
+    args->ttl = value;
+    return (0);
+}
+
+static int validate_count(t_ping_args *args, int value)
+{
+    if (value <= 0)
+    {
+        printf("ft_ping: bad number of packets to transmit\n");
+        return (1);
+    }
+    args->count = value;
+    return (0);
+}
+
+static int validate_timeout(t_ping_args *args, int value)
+{
+    if (value <= 0)
+    {
+        printf("ft_ping: bad timeout value\n");
+        return (1);
+    }
+    args->timeout = value;
+    return (0);
+}
+
+static int validate_interval(t_ping_args *args, int value)
+{
+    if (value <= 0)
+    {
+        printf("ft_ping: bad interval value\n");
+        return (1);
+    }
+    args->interval = value;
+    return (0);
+}
+
 int validate_arguments(int argc, char **argv, t_ping_args *args)
 {
     int opt;
-    char *host = NULL;
-    
-    // Reset getopt for multiple calls (if needed)
-    optind = 1;
     
     // Initialize args with default values
     memset(args, 0, sizeof(t_ping_args));
@@ -67,6 +107,9 @@ int validate_arguments(int argc, char **argv, t_ping_args *args)
     args->interval = 1;
     args->timeout = 0;
     args->verbose = 0;
+    
+    // Reset getopt for multiple calls
+    optind = 1;
     
     while ((opt = getopt(argc, argv, "vVc:t:w:i:?")) != -1)
     {
@@ -79,36 +122,20 @@ int validate_arguments(int argc, char **argv, t_ping_args *args)
                 print_version();
                 break;
             case 'c':
-                args->count = atoi(optarg);
-                if (args->count <= 0)
-                {
-                    printf("ft_ping: bad number of packets to transmit\n");
+                if (validate_count(args, atoi(optarg)))
                     return (1);
-                }
                 break;
             case 't':
-                args->ttl = atoi(optarg);
-                if (args->ttl <= 0 || args->ttl > 255)
-                {
-                    printf("ft_ping: ttl %d out of range\n", args->ttl);
+                if (validate_ttl(args, atoi(optarg)))
                     return (1);
-                }
                 break;
             case 'w':
-                args->timeout = atoi(optarg);
-                if (args->timeout <= 0)
-                {
-                    printf("ft_ping: bad timeout value\n");
+                if (validate_timeout(args, atoi(optarg)))
                     return (1);
-                }
                 break;
             case 'i':
-                args->interval = atoi(optarg);
-                if (args->interval <= 0)
-                {
-                    printf("ft_ping: bad interval value\n");
+                if (validate_interval(args, atoi(optarg)))
                     return (1);
-                }
                 break;
             case '?':
                 print_usage();
@@ -121,15 +148,14 @@ int validate_arguments(int argc, char **argv, t_ping_args *args)
     
     // Get the host argument (non-option argument)
     if (optind < argc)
-        host = argv[optind];
+        args->host = argv[optind];
     
-    if (!host)
+    if (!args->host)
     {
         printf("ft_ping: missing host operand\n");
         return (1);
     }
     
-    args->host = host;
     return (0);
 }
 
@@ -140,31 +166,44 @@ void run_ping_loop(t_ping *ping)
 
     while (1)
     {
-        struct timeval current_time;
-        gettimeofday(&current_time, NULL);
-        
-        // Check if we've exceeded the timeout
-        if (ping->timeout > 0)
-        {
-            double elapsed = get_time_diff(&start_time, &current_time);
-            if (elapsed >= ping->timeout)
-            {
-                print_statistics(ping);
-                exit(0);
-            }
-        }
-
-        // Check if we've reached the count limit before sending
+        // Check count limit
         if (ping->count > 0 && ping->packets_sent >= ping->count)
         {
             print_statistics(ping);
             exit(0);
         }
 
+        // Send and receive packet
         send_packet(ping);
         receive_packet(ping);
+
+        // Handle timeout if specified
+        if (ping->timeout > 0)
+        {
+            struct timeval current_time;
+            gettimeofday(&current_time, NULL);
+            double elapsed = get_time_diff(&start_time, &current_time);
+            double timeout_ms = ping->timeout * 1000.0;
+            
+            if (elapsed >= timeout_ms)
+            {
+                print_statistics(ping);
+                exit(0);
+            }
+
+            // Calculate sleep time
+            double remaining = timeout_ms - elapsed;
+            double sleep_time = (ping->interval > 0 ? ping->interval : 1.0) * 1000.0;
+            
+            if (remaining < sleep_time)
+            {
+                usleep(remaining * 1000);
+                print_statistics(ping);
+                exit(0);
+            }
+        }
         
-        // Use custom interval if specified, otherwise default to 1 second
+        // Sleep between packets
         sleep(ping->interval > 0 ? ping->interval : 1);
     }
 }
