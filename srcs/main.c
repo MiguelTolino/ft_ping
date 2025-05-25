@@ -147,15 +147,15 @@ void run_ping_loop(t_ping *ping)
             }
         }
 
-        send_packet(ping);
-        receive_packet(ping);
-        
-        // Check if we've reached the count limit
+        // Check if we've reached the count limit before sending
         if (ping->count > 0 && ping->packets_sent >= ping->count)
         {
             print_statistics(ping);
             exit(0);
         }
+
+        send_packet(ping);
+        receive_packet(ping);
         
         // Use custom interval if specified, otherwise default to 1 second
         sleep(ping->interval > 0 ? ping->interval : 1);
