@@ -14,7 +14,7 @@ void print_usage(void)
         "Options:\n"
         "  -v    Verbose output\n"
         "  -c    Stop after sending count packets\n"
-        "  -t    Set the IP Time To Live\n"
+        "  -t    Set TTL\n"
         "  -?    Display this help message\n\n"
         "Arguments:\n"
         "  HOST   The host to ping\n";
