@@ -54,67 +54,58 @@ void setup_signal_handler(void)
 
 int validate_arguments(int argc, char **argv)
 {
-    int i;
+    int opt;
     char *host = NULL;
-
-    for (i = 1; i < argc; i++)
+    
+    // Reset getopt for multiple calls (if needed)
+    optind = 1;
+    
+    while ((opt = getopt(argc, argv, "vVc:t:?")) != -1)
     {
-        if (argv[i][0] == '-')
+        switch (opt)
         {
-            if (argv[i][1] == 'v')
+            case 'v':
                 g_ping.verbose = 1;
-            else if (argv[i][1] == 'V')
+                break;
+            case 'V':
                 print_version();
-            else if (argv[i][1] == 'c')
-            {
-                if (i + 1 >= argc || !isdigit(argv[i + 1][0]))
-                {
-                    printf("ft_ping: option requires an argument -- 'c'\n");
-                    print_usage();
-                    return (1);
-                }
-                g_ping.count = atoi(argv[++i]);
+                break;
+            case 'c':
+                g_ping.count = atoi(optarg);
                 if (g_ping.count <= 0)
                 {
                     printf("ft_ping: bad number of packets to transmit\n");
                     return (1);
                 }
-            }
-            else if (argv[i][1] == 't')
-            {
-                if (i + 1 >= argc || !isdigit(argv[i + 1][0]))
-                {
-                    printf("ft_ping: option requires an argument -- 't'\n");
-                    print_usage();
-                    return (1);
-                }
-                g_ping.ttl = atoi(argv[++i]);
+                break;
+            case 't':
+                g_ping.ttl = atoi(optarg);
                 if (g_ping.ttl <= 0 || g_ping.ttl > 255)
                 {
                     printf("ft_ping: ttl %d out of range\n", g_ping.ttl);
                     return (1);
                 }
-            }
-            else if (argv[i][1] == '?')
-                print_usage();
-            else
-            {
-                printf("ft_ping: invalid option -- '%c'\n", argv[i][1]);
+                break;
+            case '?':
                 print_usage();
                 return (1);
-            }
+            default:
+                print_usage();
+                return (1);
         }
-        else
-            host = argv[i];
     }
-
+    
+    // Get the host argument (non-option argument)
+    if (optind < argc)
+        host = argv[optind];
+    
     if (!host)
     {
         printf("ft_ping: missing host operand\n");
         print_usage();
         return (1);
     }
-
+    
     g_ping.host = host;
     return (0);
 }
