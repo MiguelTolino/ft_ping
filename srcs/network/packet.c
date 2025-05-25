@@ -14,7 +14,7 @@ void init_ping(t_ping *ping, char *host)
     ping->ttl = 64;
     ping->count = -1; // Infinito por defecto
     ping->interval = 1;
-    ping->timeout = 1;
+    ping->timeout = 0;  // 0 means no timeout by default
     ping->min_time = -1;
 
     // Resolver el nombre de host a dirección IP

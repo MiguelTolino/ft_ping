@@ -13,7 +13,7 @@ void setup_socket(t_ping *ping)
 
     // Establecer timeout de recepción
     struct timeval tv;
-    tv.tv_sec = ping->timeout;
+    tv.tv_sec = 1;  // 1 second timeout for receiving individual packets
     tv.tv_usec = 0;
     if (setsockopt(ping->sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0)
         error_exit("setsockopt failed");
