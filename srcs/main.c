@@ -60,7 +60,7 @@ int validate_arguments(int argc, char **argv)
     // Reset getopt for multiple calls (if needed)
     optind = 1;
     
-    while ((opt = getopt(argc, argv, "vVc:t:w:?")) != -1)
+    while ((opt = getopt(argc, argv, "vVc:t:w:i:?")) != -1)
     {
         switch (opt)
         {
@@ -91,6 +91,14 @@ int validate_arguments(int argc, char **argv)
                 if (g_ping.timeout <= 0)
                 {
                     printf("ft_ping: bad timeout value\n");
+                    return (1);
+                }
+                break;
+            case 'i':
+                g_ping.interval = atoi(optarg);
+                if (g_ping.interval <= 0)
+                {
+                    printf("ft_ping: bad interval value\n");
                     return (1);
                 }
                 break;
@@ -149,7 +157,8 @@ void run_ping_loop(t_ping *ping)
             exit(0);
         }
         
-        sleep(1); // Interval between pings
+        // Use custom interval if specified, otherwise default to 1 second
+        sleep(ping->interval > 0 ? ping->interval : 1);
     }
 }
 

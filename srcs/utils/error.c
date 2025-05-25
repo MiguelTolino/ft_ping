@@ -16,6 +16,7 @@ void print_usage(void)
         "  -c    Stop after sending count packets\n"
         "  -t    Set TTL\n"
         "  -w    Stop after N seconds\n"
+        "  -i    Wait N seconds between sending each packet\n"
         "  -V    Display version information\n"
         "  -?    Display this help message\n\n"
         "Arguments:\n"
