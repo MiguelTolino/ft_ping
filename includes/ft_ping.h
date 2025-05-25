@@ -8,7 +8,20 @@
 # include <sys/types.h>
 # include <sys/socket.h>
 # include <netinet/in.h>
-# include <netinet/ip_icmp.h>
+# include <netinet/ip.h>
+
+# ifdef __APPLE__
+#  include <netinet/ip_icmp.h>
+#  define icmphdr icmp
+#  define type icmp_type
+#  define code icmp_code
+#  define checksum icmp_cksum
+#  define un.echo.id icmp_id
+#  define un.echo.sequence icmp_seq
+# else
+#  include <netinet/ip_icmp.h>
+# endif
+
 # include <arpa/inet.h>
 # include <netdb.h>
 # include <sys/time.h>

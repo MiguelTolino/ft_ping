@@ -118,5 +118,17 @@ void receive_packet(t_ping *ping)
             ping->times[ping->packets_received] = time_diff;
         
         ping->packets_received++;
+        
+        // Print response line (normal output)
+        printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.1f ms",
+               bytes_received, ping->ip, icmp->un.echo.sequence, ip->ttl, time_diff);
+        
+        // Add verbose information if requested
+        if (ping->verbose)
+        {
+            printf(" id=0x%04x", icmp->un.echo.id);
+        }
+        
+        printf("\n");
     }
 } 
