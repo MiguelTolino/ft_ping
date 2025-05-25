@@ -175,9 +175,7 @@ int validate_arguments(int argc, char **argv, t_ping_args *args)
 
 void run_ping_loop(t_ping *ping)
 {
-    struct timeval start_time;
-    gettimeofday(&start_time, NULL);
-
+    struct timeval before, after;
     while (1)
     {
         // Check count limit
@@ -188,19 +186,25 @@ void run_ping_loop(t_ping *ping)
             exit(0);
         }
 
+        gettimeofday(&before, NULL);
+
         // Send and receive packet
         send_packet(ping);
         receive_packet(ping);
+
+        gettimeofday(&after, NULL);
+        double elapsed = get_time_diff(&before, &after); // in ms
+        double interval_ms = (ping->interval > 0 ? ping->interval : 1) * 1000.0;
 
         // Handle timeout if specified
         if (ping->timeout > 0)
         {
             struct timeval current_time;
             gettimeofday(&current_time, NULL);
-            double elapsed = get_time_diff(&start_time, &current_time);
+            double total_elapsed = get_time_diff(&before, &current_time);
             double timeout_ms = ping->timeout * 1000.0;
-            
-            if (elapsed >= timeout_ms)
+
+            if (total_elapsed >= timeout_ms)
             {
                 print_statistics(ping);
                 cleanup_ping(ping);
@@ -208,10 +212,8 @@ void run_ping_loop(t_ping *ping)
             }
 
             // Calculate sleep time
-            double remaining = timeout_ms - elapsed;
-            double sleep_time = (ping->interval > 0 ? ping->interval : 1.0) * 1000.0;
-            
-            if (remaining < sleep_time)
+            double remaining = timeout_ms - total_elapsed;
+            if (remaining < interval_ms)
             {
                 usleep(remaining * 1000);
                 print_statistics(ping);
@@ -219,9 +221,10 @@ void run_ping_loop(t_ping *ping)
                 exit(0);
             }
         }
-        
-        // Sleep between packets
-        sleep(ping->interval > 0 ? ping->interval : 1);
+
+        // Sleep for the remaining interval, if any
+        if (elapsed < interval_ms)
+            usleep((interval_ms - elapsed) * 1000);
     }
 }
 
