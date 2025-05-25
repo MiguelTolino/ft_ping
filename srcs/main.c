@@ -1,12 +1,11 @@
 #include "../includes/ft_ping.h"
-#include <unistd.h>
 
 t_ping g_ping;
 
 void print_statistics(t_ping *ping)
 {
     printf("\n--- %s ping statistics ---\n", ping->host);
-    printf("%d packets transmitted, %d received, ", 
+    printf("%d packets transmitted, %d packets received, ", 
         ping->packets_sent, ping->packets_received);
     if (ping->packets_sent > 0)
     {
@@ -15,8 +14,19 @@ void print_statistics(t_ping *ping)
     }
     if (ping->packets_received > 0)
     {
-        printf("rtt min/avg/max = %.3f/%.3f/%.3f ms\n",
-            ping->min_time, ping->total_time / ping->packets_received, ping->max_time);
+        double avg = ping->total_time / ping->packets_received;
+        double stddev = 0.0;
+        
+        // Calculate standard deviation
+        for (int i = 0; i < ping->packets_received; i++)
+        {
+            double diff = ping->times[i] - avg;
+            stddev += diff * diff;
+        }
+        stddev = sqrt(stddev / ping->packets_received);
+        
+        printf("round-trip min/avg/max/stddev = %.3f/%.3f/%.3f/%.3f ms\n",
+            ping->min_time, avg, ping->max_time, stddev);
     }
 }
 

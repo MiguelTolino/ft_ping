@@ -4,6 +4,7 @@ NAME = ft_ping
 # Compiler settings
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
+LDFLAGS = -lm
 DEBUG_FLAGS = -g3 -fsanitize=address
 RM = rm -f
 
@@ -51,7 +52,7 @@ $(BUILD_DIR):
 # Main compilation
 $(BUILD_DIR)/$(NAME): $(OBJS)
 	@echo "$(BOLD)$(ARROW) Compiling $(NAME)...$(RESET)"
-	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(OBJS)
+	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(OBJS) $(LDFLAGS)
 	@echo "$(CHECK) $(GREEN)$(NAME) successfully compiled!$(RESET)"
 
 # Object file compilation

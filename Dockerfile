@@ -21,10 +21,10 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copiar los archivos del proyecto
-COPY . .
+# COPY . .
 
 # Dar permisos de ejecución al script de dependencias
-RUN chmod +x dependencies.sh
+# RUN chmod +x dependencies.sh
 
 # Comando por defecto
 CMD ["/bin/bash"] 

@@ -14,42 +14,12 @@
 # include <sys/time.h>
 # include <signal.h>
 # include <errno.h>
+# include <math.h>
 
 # define PACKET_SIZE 64
 # define MAX_PACKET_SIZE 65507
 # define MAX_IP_LEN 16
-
-// Definición de la estructura IP header
-struct iphdr {
-    unsigned int ihl : 4;
-    unsigned int version : 4;
-    unsigned char tos;
-    unsigned short tot_len;
-    unsigned short id;
-    unsigned short frag_off;
-    unsigned char ttl;
-    unsigned char protocol;
-    unsigned short check;
-    unsigned int saddr;
-    unsigned int daddr;
-};
-
-// Definición de la estructura ICMP header
-struct icmphdr {
-    unsigned char type;
-    unsigned char code;
-    unsigned short checksum;
-    union {
-        struct {
-            unsigned short id;
-            unsigned short sequence;
-        } echo;
-        unsigned int gateway;
-        struct {
-            unsigned short mtu;
-        } frag;
-    } un;
-};
+# define MAX_PACKETS 1000  // Maximum number of packets to store for stddev
 
 typedef struct s_ping {
     char        *host;
@@ -66,6 +36,7 @@ typedef struct s_ping {
     double      min_time;
     double      max_time;
     double      total_time;
+    double      times[MAX_PACKETS];  // Array to store round-trip times
 } t_ping;
 
 // Funciones principales
