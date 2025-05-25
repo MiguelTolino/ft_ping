@@ -41,8 +41,11 @@ void init_ping(t_ping *ping, char *host)
 
     freeaddrinfo(result);
 
-    printf("PING %s (%s): %d data bytes, id 0x%04x = %d\n", 
-           host, ping->ip, PACKET_SIZE - 8, getpid() & 0xFFFF, getpid() & 0xFFFF);
+    printf("PING %s (%s): %d data bytes", 
+           host, ping->ip, PACKET_SIZE - 8);
+    if (ping->verbose)
+        printf(", id 0x%04x = %d", getpid() & 0xFFFF, getpid() & 0xFFFF);
+    printf("\n");
 }
 
 void send_packet(t_ping *ping)
