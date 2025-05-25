@@ -1,27 +1,27 @@
-# ft_ping
+# 🚀 ft_ping
 
 A recreation of the Linux ping command in C. This project implements the core functionality of the ping utility, allowing users to test network connectivity by sending ICMP ECHO_REQUEST packets to network hosts.
 
-## Features
+## ✨ Features
 
-- Send ICMP ECHO_REQUEST packets to network hosts
-- Display round-trip time statistics
-- Support for various command-line options:
+- 📡 Send ICMP ECHO_REQUEST packets to network hosts
+- 📊 Display round-trip time statistics
+- ⚙️ Support for various command-line options:
   - `-c`: Stop after sending count packets
   - `-t`: Set the IP Time To Live
   - `-v`: Verbose output
   - `-V`: Display version information
   - `-?`: Display help message
 
-## Installation
+## 🛠️ Installation
 
-### Prerequisites
+### 📋 Prerequisites
 
-- GCC compiler
-- Make
-- Root privileges (for raw socket operations)
+- 🛠️ GCC compiler
+- 🔧 Make
+- 🔐 Root privileges (for raw socket operations)
 
-### Building
+### 🏗️ Building
 
 1. Clone the repository:
 ```bash
@@ -39,7 +39,7 @@ make
 sudo make install
 ```
 
-## Usage
+## 💻 Usage
 
 Basic usage:
 ```bash
@@ -64,7 +64,7 @@ ft_ping -v 8.8.8.8
 ft_ping -V
 ```
 
-## Testing
+## 🧪 Testing
 
 Run the test suite:
 ```bash
@@ -73,64 +73,66 @@ make test
 
 The tests compare ft_ping's behavior with the original ping command and generate detailed logs in the `logs` directory.
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 ft_ping/
-├── includes/
-│   └── ft_ping.h
-├── srcs/
-│   ├── main.c
-│   ├── network/
-│   │   ├── packet.c
-│   │   └── socket.c
-│   └── utils/
-│       ├── checksum.c
-│       ├── error.c
-│       └── time.c
-├── tests/
-│   └── test_ping.sh
-├── Makefile
-└── README.md
+├── 📂 includes/
+│   └── 📄 ft_ping.h
+├── 📂 srcs/
+│   ├── 📄 main.c
+│   ├── 📂 network/
+│   │   ├── 📄 packet.c
+│   │   └── 📄 socket.c
+│   └── 📂 utils/
+│       ├── 📄 checksum.c
+│       ├── 📄 error.c
+│       └── 📄 time.c
+├── 📂 tests/
+│   └── 📄 test_ping.sh
+├── 📄 Makefile
+└── 📄 README.md
 ```
 
-## Make Commands
+## 🔧 Make Commands
 
-- `make`: Build the project
-- `make test`: Run the test suite
-- `make install`: Install ft_ping system-wide
-- `make uninstall`: Remove ft_ping from the system
-- `make clean`: Remove build artifacts
-- `make fclean`: Remove all generated files
-- `make re`: Rebuild the project
-- `make debug`: Build with debug flags
-- `make help`: Display available make commands
+| Command | Description |
+|---------|-------------|
+| `make` | 🏗️ Build the project |
+| `make test` | 🧪 Run the test suite |
+| `make install` | 📥 Install ft_ping system-wide |
+| `make uninstall` | 📤 Remove ft_ping from the system |
+| `make clean` | 🧹 Remove build artifacts |
+| `make fclean` | 🧹 Remove all generated files |
+| `make re` | 🔄 Rebuild the project |
+| `make debug` | 🐛 Build with debug flags |
+| `make help` | ❓ Display available make commands |
 
-## Error Handling
+## ⚠️ Error Handling
 
 The program handles various error conditions:
-- Invalid hostnames
-- Network connectivity issues
-- Invalid command-line options
-- Permission issues (requires root for raw sockets)
+- ❌ Invalid hostnames
+- 🌐 Network connectivity issues
+- 🚫 Invalid command-line options
+- 🔒 Permission issues (requires root for raw sockets)
 
-## Contributing
+## 🤝 Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. 🍴 Fork the repository
+2. 🌿 Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. 💾 Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. 📤 Push to the branch (`git push origin feature/amazing-feature`)
+5. 🔄 Open a Pull Request
 
-## License
+## 📝 License
 
 This project is part of the 42 school curriculum.
 
-## Author
+## 👨‍💻 Author
 
 - mmateo-t
 
-## Acknowledgments
+## 🙏 Acknowledgments
 
 - Original ping command implementation
 - 42 school for the project requirements
