@@ -1,4 +1,5 @@
 #include "../includes/ft_ping.h"
+#include <ctype.h>
 
 t_ping g_ping;
 
@@ -62,6 +63,36 @@ int validate_arguments(int argc, char **argv)
         {
             if (argv[i][1] == 'v')
                 g_ping.verbose = 1;
+            else if (argv[i][1] == 'c')
+            {
+                if (i + 1 >= argc || !isdigit(argv[i + 1][0]))
+                {
+                    printf("ft_ping: option requires an argument -- 'c'\n");
+                    print_usage();
+                    return (1);
+                }
+                g_ping.count = atoi(argv[++i]);
+                if (g_ping.count <= 0)
+                {
+                    printf("ft_ping: bad number of packets to transmit\n");
+                    return (1);
+                }
+            }
+            else if (argv[i][1] == 't')
+            {
+                if (i + 1 >= argc || !isdigit(argv[i + 1][0]))
+                {
+                    printf("ft_ping: option requires an argument -- 't'\n");
+                    print_usage();
+                    return (1);
+                }
+                g_ping.ttl = atoi(argv[++i]);
+                if (g_ping.ttl <= 0 || g_ping.ttl > 255)
+                {
+                    printf("ft_ping: ttl %d out of range\n", g_ping.ttl);
+                    return (1);
+                }
+            }
             else if (argv[i][1] == '?')
                 print_usage();
             else
@@ -92,7 +123,15 @@ void run_ping_loop(t_ping *ping)
     {
         send_packet(ping);
         receive_packet(ping);
-        sleep(1); // Intervalo entre pings
+        
+        // Check if we've reached the count limit
+        if (ping->count > 0 && ping->packets_sent >= ping->count)
+        {
+            print_statistics(ping);
+            exit(0);
+        }
+        
+        sleep(1); // Interval between pings
     }
 }
 

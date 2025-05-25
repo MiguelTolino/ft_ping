@@ -13,6 +13,8 @@ void print_usage(void)
         "Send ICMP ECHO_REQUEST packets to network hosts.\n\n"
         "Options:\n"
         "  -v    Verbose output\n"
+        "  -c    Stop after sending count packets\n"
+        "  -t    Set the IP Time To Live\n"
         "  -?    Display this help message\n\n"
         "Arguments:\n"
         "  HOST   The host to ping\n";
