@@ -58,6 +58,7 @@ void    setup_signal_handler(void);
 void    error_exit(const char *msg);
 double  get_time_diff(struct timeval *start, struct timeval *end);
 void    print_usage(void);
+void    print_version(void);
 unsigned short in_cksum(unsigned short *addr, int len);
 
 #endif 

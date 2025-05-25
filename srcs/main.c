@@ -63,6 +63,8 @@ int validate_arguments(int argc, char **argv)
         {
             if (argv[i][1] == 'v')
                 g_ping.verbose = 1;
+            else if (argv[i][1] == 'V')
+                print_version();
             else if (argv[i][1] == 'c')
             {
                 if (i + 1 >= argc || !isdigit(argv[i + 1][0]))
