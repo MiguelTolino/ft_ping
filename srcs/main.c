@@ -118,7 +118,6 @@ int validate_arguments(int argc, char **argv)
     if (!host)
     {
         printf("ft_ping: missing host operand\n");
-        print_usage();
         return (1);
     }
     
@@ -154,6 +153,7 @@ void run_ping_loop(t_ping *ping)
             exit(0);
         }
 
+        printf("Debug: count=%d, packets_sent=%d\n", ping->count, ping->packets_sent);
         send_packet(ping);
         receive_packet(ping);
         
