@@ -52,7 +52,7 @@ void setup_signal_handler(void)
         error_exit("Failed to set up signal handler");
 }
 
-int validate_arguments(int argc, char **argv)
+int validate_arguments(int argc, char **argv, t_ping_args *args)
 {
     int opt;
     char *host = NULL;
@@ -60,43 +60,51 @@ int validate_arguments(int argc, char **argv)
     // Reset getopt for multiple calls (if needed)
     optind = 1;
     
+    // Initialize args with default values
+    memset(args, 0, sizeof(t_ping_args));
+    args->ttl = 64;
+    args->count = -1;
+    args->interval = 1;
+    args->timeout = 0;
+    args->verbose = 0;
+    
     while ((opt = getopt(argc, argv, "vVc:t:w:i:?")) != -1)
     {
         switch (opt)
         {
             case 'v':
-                g_ping.verbose = 1;
+                args->verbose = 1;
                 break;
             case 'V':
                 print_version();
                 break;
             case 'c':
-                g_ping.count = atoi(optarg);
-                if (g_ping.count <= 0)
+                args->count = atoi(optarg);
+                if (args->count <= 0)
                 {
                     printf("ft_ping: bad number of packets to transmit\n");
                     return (1);
                 }
                 break;
             case 't':
-                g_ping.ttl = atoi(optarg);
-                if (g_ping.ttl <= 0 || g_ping.ttl > 255)
+                args->ttl = atoi(optarg);
+                if (args->ttl <= 0 || args->ttl > 255)
                 {
-                    printf("ft_ping: ttl %d out of range\n", g_ping.ttl);
+                    printf("ft_ping: ttl %d out of range\n", args->ttl);
                     return (1);
                 }
                 break;
             case 'w':
-                g_ping.timeout = atoi(optarg);
-                if (g_ping.timeout <= 0)
+                args->timeout = atoi(optarg);
+                if (args->timeout <= 0)
                 {
                     printf("ft_ping: bad timeout value\n");
                     return (1);
                 }
                 break;
             case 'i':
-                g_ping.interval = atoi(optarg);
-                if (g_ping.interval <= 0)
+                args->interval = atoi(optarg);
+                if (args->interval <= 0)
                 {
                     printf("ft_ping: bad interval value\n");
                     return (1);
@@ -121,7 +129,7 @@ int validate_arguments(int argc, char **argv)
         return (1);
     }
     
-    g_ping.host = host;
+    args->host = host;
     return (0);
 }
 
@@ -153,7 +161,6 @@ void run_ping_loop(t_ping *ping)
             exit(0);
         }
 
-        printf("Debug: count=%d, packets_sent=%d\n", ping->count, ping->packets_sent);
         send_packet(ping);
         receive_packet(ping);
         
@@ -164,12 +171,14 @@ void run_ping_loop(t_ping *ping)
 
 int main(int argc, char **argv)
 {
-    if (validate_arguments(argc, argv))
+    t_ping_args args;
+
+    if (validate_arguments(argc, argv, &args))
         return (1);
 
     // If help was requested, validate_arguments would have called print_usage()
     // and exited, so we only reach here if we have a valid host
-    init_ping(&g_ping, g_ping.host);
+    init_ping(&g_ping, &args);
 
     // Configurar manejador de señales
     setup_signal_handler();

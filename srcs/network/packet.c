@@ -2,21 +2,22 @@
 #include <netinet/ip_icmp.h>
 #include <netinet/ip.h>
 
-void init_ping(t_ping *ping, char *host)
+void init_ping(t_ping *ping, t_ping_args *args)
 {
     struct addrinfo hints;
     struct addrinfo *result;
     int status;
 
-    if (!host || !*host)
+    if (!args->host || !*args->host)
         error_exit("Invalid host: empty hostname");
 
     memset(ping, 0, sizeof(t_ping));
-    ping->host = host;
-    ping->ttl = 64;
-    ping->count = -1; // Default to infinite
-    ping->interval = 1;
-    ping->timeout = 0;  // 0 means no timeout by default
+    ping->host = args->host;
+    ping->ttl = args->ttl;
+    ping->count = args->count;
+    ping->interval = args->interval;
+    ping->timeout = args->timeout;
+    ping->verbose = args->verbose;
     ping->min_time = -1;
     ping->max_time = 0;
     ping->total_time = 0;
@@ -27,10 +28,10 @@ void init_ping(t_ping *ping, char *host)
     hints.ai_socktype = SOCK_RAW;
     hints.ai_protocol = IPPROTO_ICMP;
 
-    if ((status = getaddrinfo(host, NULL, &hints, &result)) != 0)
+    if ((status = getaddrinfo(args->host, NULL, &hints, &result)) != 0)
     {
         char error_msg[256];
-        snprintf(error_msg, sizeof(error_msg), "Unknown host: %s (%s)", host,
+        snprintf(error_msg, sizeof(error_msg), "Unknown host: %s (%s)", args->host,
                  gai_strerror(status));
         error_exit(error_msg);
     }
@@ -46,7 +47,7 @@ void init_ping(t_ping *ping, char *host)
     freeaddrinfo(result);
 
     printf("PING %s (%s): %d data bytes", 
-           host, ping->ip, PACKET_SIZE - 8);
+           args->host, ping->ip, PACKET_SIZE - 8);
     if (ping->verbose)
         printf(", id 0x%04x = %d", getpid() & 0xFFFF, getpid() & 0xFFFF);
     printf("\n");
@@ -170,7 +171,7 @@ void receive_packet(t_ping *ping)
         ping->packets_received++;
         
         // Print response line
-        printf("%zd bytes from %s: icmp_seq=%d ttl=%d time=%.1f ms",
+        printf("%zd bytes from %s: icmp_seq=%d ttl=%d time=%.3f ms",
                bytes_received, ping->ip, icmp->un.echo.sequence, ip->ttl, time_diff);
         
         if (ping->verbose)

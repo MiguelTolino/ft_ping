@@ -22,6 +22,15 @@
 # define MAX_IP_LEN 16
 # define MAX_PACKETS 1000  // Maximum number of packets to store for stddev
 
+typedef struct s_ping_args {
+    char        *host;
+    int         ttl;
+    int         count;
+    int         interval;
+    int         timeout;
+    int         verbose;
+} t_ping_args;
+
 typedef struct s_ping {
     char        *host;
     char        ip[MAX_IP_LEN];
@@ -41,7 +50,7 @@ typedef struct s_ping {
 } t_ping;
 
 // Funciones principales
-void    init_ping(t_ping *ping, char *host);
+void    init_ping(t_ping *ping, t_ping_args *args);
 void    setup_socket(t_ping *ping);
 void    send_packet(t_ping *ping);
 void    receive_packet(t_ping *ping);
@@ -49,7 +58,7 @@ void    print_statistics(t_ping *ping);
 void    run_ping_loop(t_ping *ping);
 
 // Funciones de validación
-int     validate_arguments(int argc, char **argv);
+int     validate_arguments(int argc, char **argv, t_ping_args *args);
 
 // Funciones de manejo de señales
 void    signal_handler(int signum);
