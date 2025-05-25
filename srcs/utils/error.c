@@ -15,6 +15,7 @@ void print_usage(void)
         "  -v    Verbose output\n"
         "  -c    Stop after sending count packets\n"
         "  -t    Set TTL\n"
+        "  -w    Stop after N seconds\n"
         "  -V    Display version information\n"
         "  -?    Display this help message\n\n"
         "Arguments:\n"

@@ -60,7 +60,7 @@ int validate_arguments(int argc, char **argv)
     // Reset getopt for multiple calls (if needed)
     optind = 1;
     
-    while ((opt = getopt(argc, argv, "vVc:t:?")) != -1)
+    while ((opt = getopt(argc, argv, "vVc:t:w:?")) != -1)
     {
         switch (opt)
         {
@@ -83,6 +83,14 @@ int validate_arguments(int argc, char **argv)
                 if (g_ping.ttl <= 0 || g_ping.ttl > 255)
                 {
                     printf("ft_ping: ttl %d out of range\n", g_ping.ttl);
+                    return (1);
+                }
+                break;
+            case 'w':
+                g_ping.timeout = atoi(optarg);
+                if (g_ping.timeout <= 0)
+                {
+                    printf("ft_ping: bad timeout value\n");
                     return (1);
                 }
                 break;
@@ -112,8 +120,25 @@ int validate_arguments(int argc, char **argv)
 
 void run_ping_loop(t_ping *ping)
 {
+    struct timeval start_time;
+    gettimeofday(&start_time, NULL);
+
     while (1)
     {
+        struct timeval current_time;
+        gettimeofday(&current_time, NULL);
+        
+        // Check if we've exceeded the timeout
+        if (ping->timeout > 0)
+        {
+            double elapsed = get_time_diff(&start_time, &current_time);
+            if (elapsed >= ping->timeout)
+            {
+                print_statistics(ping);
+                exit(0);
+            }
+        }
+
         send_packet(ping);
         receive_packet(ping);
         
