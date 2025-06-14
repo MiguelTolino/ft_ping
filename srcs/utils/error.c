@@ -20,7 +20,9 @@ void print_usage(void)
         "  -i, --interval N Wait N seconds between sending each packet\n"
         "  -?, --help       Display this help message\n\n"
         "Arguments:\n"
-        "  HOST             The host to ping\n";
+        "  HOST             The host to ping\n"
+        "Mandatory arguments to long options are mandatory for short options too.\n"
+        "Report bugs to <mmateo-t@student.42madrid.com>\n";
     printf("%s", usage);
     exit(0);
 }
