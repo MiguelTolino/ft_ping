@@ -146,7 +146,7 @@ int validate_arguments(int argc, char **argv, t_ping_args *args)
     // Reset getopt for multiple calls
     optind = 1;
     
-    while ((opt = getopt_long(argc, argv, "vVc:t:w:i:?", long_options, &option_index)) != -1)
+    while ((opt = getopt_long(argc, argv, "vVc:w:i:?", long_options, &option_index)) != -1)
     {
         switch (opt)
         {
