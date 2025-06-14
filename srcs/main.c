@@ -47,6 +47,27 @@ void signal_handler(int signum)
 {
     if (signum == SIGINT)
     {
+        // Wait for the last packet's response before exiting
+        if (g_ping.packets_sent > g_ping.packets_received)
+        {
+            struct timeval start_time, current_time;
+            gettimeofday(&start_time, NULL);
+            
+            // Wait up to 1 second for the last packet
+            while (1)
+            {
+                receive_packet(&g_ping);
+                
+                // If we received the packet or 1 second has passed, break
+                if (g_ping.packets_sent == g_ping.packets_received)
+                    break;
+                    
+                gettimeofday(&current_time, NULL);
+                double elapsed = get_time_diff(&start_time, &current_time);
+                if (elapsed >= 1000.0) // 1000ms = 1 second
+                    break;
+            }
+        }
         print_statistics(&g_ping);
         cleanup_ping(&g_ping);
         exit(0);
@@ -182,6 +203,11 @@ void run_ping_loop(t_ping *ping)
         // Check count limit
         if (ping->count > 0 && ping->packets_sent >= ping->count)
         {
+            // Wait for the last packet's response before exiting
+            if (ping->packets_sent == ping->count)
+            {
+                receive_packet(ping);
+            }
             print_statistics(ping);
             cleanup_ping(ping);
             exit(0);
