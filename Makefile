@@ -88,21 +88,21 @@ uninstall:
 	@$(RM) $(BINDIR)/$(NAME)
 	@echo "$(CHECK) $(GREEN)$(NAME) successfully uninstalled!$(RESET)"
 
-# Run tests
-test: $(BUILD_DIR)/$(NAME)
-	@echo "$(BOLD)$(ARROW) Checking ft_ping installation...$(RESET)"
-	@if ! command -v ft_ping >/dev/null 2>&1; then \
-		echo "$(YELLOW)ft_ping not found in system path. Installing...$(RESET)"; \
-		$(MAKE) install; \
-	else \
-		echo "$(CHECK) $(GREEN)ft_ping is installed$(RESET)"; \
-	fi
-	@echo "$(BOLD)$(ARROW) Running tests...$(RESET)"
-	@./tests/test_ping.sh
-	@echo "$(CHECK) $(GREEN)Tests completed!$(RESET)"
-
 # Rebuild everything
 re: fclean all
+
+# Test target
+test:
+	@if [ -f tests/TESTING.md ]; then \
+		if [ "$(shell uname)" = "Darwin" ]; then \
+			open tests/TESTING.md; \
+		else \
+			xdg-open tests/TESTING.md || cat tests/TESTING.md; \
+		fi \
+	else \
+		echo "$(RED)Error: tests/TESTING.md not found$(RESET)"; \
+		exit 1; \
+	fi
 
 # Help target
 help:
@@ -114,7 +114,7 @@ help:
 	@echo "  $(GREEN)re$(RESET)         - Rebuild everything"
 	@echo "  $(GREEN)install$(RESET)    - Install $(NAME) to $(BINDIR)"
 	@echo "  $(GREEN)uninstall$(RESET)  - Remove $(NAME) from $(BINDIR)"
-	@echo "  $(GREEN)test$(RESET)       - Run test suite"
+	@echo "  $(GREEN)test$(RESET)       - Run test documentation"
 	@echo "  $(GREEN)help$(RESET)       - Show this help message"
 
 .PHONY: all clean fclean re install uninstall debug help test

@@ -34,7 +34,7 @@ chmod +x install_dependencies.sh
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/ft_ping.git
+git clone https://github.com/MiguelTolino/ft_ping.git
 cd ft_ping
 ```
 
@@ -89,40 +89,18 @@ ft_ping -V
 
 ## 🧪 Testing
 
-Run the test suite:
+Run the test documentation:
 ```bash
 make test
 ```
 
-The tests compare ft_ping's behavior with the original ping command and generate detailed logs in the `logs` directory.
-
-## 📁 Project Structure
-
-```
-ft_ping/
-├── 📂 includes/
-│   └── 📄 ft_ping.h
-├── 📂 srcs/
-│   ├── 📄 main.c
-│   ├── 📂 network/
-│   │   ├── 📄 packet.c
-│   │   └── 📄 socket.c
-│   └── 📂 utils/
-│       ├── 📄 checksum.c
-│       ├── 📄 error.c
-│       └── 📄 time.c
-├── 📂 tests/
-│   └── 📄 test_ping.sh
-├── 📄 Makefile
-└── 📄 README.md
-```
 
 ## 🔧 Make Commands
 
 | Command | Description |
 |---------|-------------|
 | `make` | 🏗️ Build the project |
-| `make test` | 🧪 Run the test suite |
+| `make test` | 🧪 Run the test documentation |
 | `make install` | 📥 Install ft_ping system-wide |
 | `make uninstall` | 📤 Remove ft_ping from the system |
 | `make clean` | 🧹 Remove build artifacts |
