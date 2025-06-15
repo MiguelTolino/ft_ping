@@ -2,19 +2,6 @@
 
 A recreation of the Linux ping command in C. This project implements the core functionality of the ping utility, allowing users to test network connectivity by sending ICMP ECHO_REQUEST packets to network hosts.
 
-## ✨ Features
-
-- 📡 Send ICMP ECHO_REQUEST packets to network hosts
-- 📊 Display round-trip time statistics including min/avg/max/stddev
-- ⚙️ Support for various command-line options:
-  - `-c`: Stop after sending count packets
-  - `-t`: Set the IP Time To Live (default: 64)
-  - `-w`: Set timeout in seconds
-  - `-i`: Set interval between packets in seconds (default: 1)
-  - `-v`: Verbose output
-  - `-V`: Display version information
-  - `-?`: Display help message
-
 ## 🛠️ Installation
 
 ### 📋 Prerequisites
