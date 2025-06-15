@@ -67,6 +67,11 @@ void send_packet(t_ping *ping)
     icmp->code = 0;
     icmp->un.echo.id = getpid() & 0xFFFF;
     icmp->un.echo.sequence = ping->packets_sent;
+    
+    // Store timestamp in the packet payload for accurate RTT measurement
+    struct timeval *timestamp = (struct timeval *)(packet + sizeof(struct icmphdr));
+    gettimeofday(timestamp, NULL);
+    
     icmp->checksum = 0;
     icmp->checksum = in_cksum((unsigned short *)icmp, PACKET_SIZE);
 
@@ -95,7 +100,7 @@ void receive_packet(t_ping *ping)
     char packet[MAX_PACKET_SIZE];
     struct sockaddr_in from;
     socklen_t fromlen = sizeof(from);
-    struct timeval start_time, end_time;
+    struct timeval end_time;
     struct iphdr *ip;
     struct icmphdr *icmp;
     ssize_t bytes_received;
@@ -103,7 +108,6 @@ void receive_packet(t_ping *ping)
     int max_retries = (strcmp(ping->ip, "127.0.0.1") == 0) ? 5 : 1;  // Increased retries for localhost
     const size_t min_packet_size = sizeof(struct iphdr) + sizeof(struct icmphdr);
 
-    gettimeofday(&start_time, NULL);
 
     while (retries < max_retries)
     {
@@ -135,8 +139,6 @@ void receive_packet(t_ping *ping)
             continue;
         }
 
-        gettimeofday(&end_time, NULL);
-
         // Process received packet
         ip = (struct iphdr *)packet;
         icmp = (struct icmphdr *)(packet + (ip->ihl << 2));
@@ -155,7 +157,16 @@ void receive_packet(t_ping *ping)
             continue;
         }
 
-        double time_diff = get_time_diff(&start_time, &end_time);
+        // Note: We don't validate sequence number here since responses may arrive out of order
+        // The timing will still be accurate for the actual round-trip time
+
+        // Capture end time only after validating this is our packet
+        gettimeofday(&end_time, NULL);
+
+        // Extract the original timestamp from the packet payload
+        struct timeval *packet_timestamp = (struct timeval *)(packet + (ip->ihl << 2) + sizeof(struct icmphdr));
+        double time_diff = get_time_diff(packet_timestamp, &end_time);
+
 
         // Update statistics
         if (ping->min_time == -1 || time_diff < ping->min_time)
