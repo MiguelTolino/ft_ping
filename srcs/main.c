@@ -197,8 +197,9 @@ int validate_arguments(int argc, char **argv, t_ping_args *args)
 
 void run_ping_loop(t_ping *ping)
 {
-    struct timeval before, after;
-    gettimeofday(&before, NULL); // Initialize timing
+    struct timeval loop_start, after_receive;
+    double interval_ms = (ping->interval > 0 ? ping->interval : 1) * 1000.0;
+    
     while (1)
     {
         // Check count limit
@@ -214,23 +215,31 @@ void run_ping_loop(t_ping *ping)
             exit(0);
         }
 
-        // Send packet without timing overhead
+        // Record start time for this loop iteration
+        gettimeofday(&loop_start, NULL);
+
+        // Send packet
         send_packet(ping);
+
+        // Receive packet immediately (this calculates correct RTT)
         receive_packet(ping);
 
-        // Calculate precise interval timing
-        gettimeofday(&after, NULL);
-        double elapsed = get_time_diff(&before, &after); // in ms
-        double interval_ms = (ping->interval > 0 ? ping->interval : 1) * 1000.0;
-        
-        gettimeofday(&before, NULL); // Reset for next iteration
+        // Calculate how much time elapsed for send+receive
+        gettimeofday(&after_receive, NULL);
+        double elapsed = get_time_diff(&loop_start, &after_receive);
+
+        // Sleep for the remaining interval time
+        if (elapsed < interval_ms)
+        {
+            usleep((interval_ms - elapsed) * 1000);
+        }
 
         // Handle timeout if specified
         if (ping->timeout > 0)
         {
             struct timeval current_time;
             gettimeofday(&current_time, NULL);
-            double total_elapsed = get_time_diff(&before, &current_time);
+            double total_elapsed = get_time_diff(&loop_start, &current_time);
             double timeout_ms = ping->timeout * 1000.0;
 
             if (total_elapsed >= timeout_ms)
@@ -239,21 +248,7 @@ void run_ping_loop(t_ping *ping)
                 cleanup_ping(ping);
                 exit(0);
             }
-
-            // Calculate sleep time
-            double remaining = timeout_ms - total_elapsed;
-            if (remaining < interval_ms)
-            {
-                usleep(remaining * 1000);
-                print_statistics(ping);
-                cleanup_ping(ping);
-                exit(0);
-            }
         }
-
-        // Sleep for the remaining interval, if any
-        if (elapsed < interval_ms)
-            usleep((interval_ms - elapsed) * 1000);
     }
 }
 
