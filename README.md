@@ -66,14 +66,6 @@ ft_ping -v 8.8.8.8
 ft_ping -V
 ```
 
-## 📦 Packet Details
-
-- Default packet size: 64 bytes (56 bytes data + 8 bytes ICMP header)
-- Maximum packet size: 65507 bytes (for receiving responses)
-- Default TTL: 64
-- Default interval: 1 second
-- Default timeout: None (runs until interrupted)
-
 ## 🧪 Testing
 
 Run the test documentation:
