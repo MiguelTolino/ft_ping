@@ -21,6 +21,7 @@
 # define MAX_PACKET_SIZE 65507
 # define MAX_IP_LEN 16
 # define MAX_PACKETS 1000  // Maximum number of packets to store for stddev
+# define MIN_INTERVAL_US 200  // Minimum interval in microseconds for flood ping protection
 
 typedef struct s_ping_args {
     char        *host;

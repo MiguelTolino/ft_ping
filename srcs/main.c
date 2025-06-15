@@ -198,6 +198,7 @@ int validate_arguments(int argc, char **argv, t_ping_args *args)
 void run_ping_loop(t_ping *ping)
 {
     struct timeval before, after;
+    gettimeofday(&before, NULL); // Initialize timing
     while (1)
     {
         // Check count limit
@@ -213,15 +214,16 @@ void run_ping_loop(t_ping *ping)
             exit(0);
         }
 
-        gettimeofday(&before, NULL);
-
-        // Send and receive packet
+        // Send packet without timing overhead
         send_packet(ping);
         receive_packet(ping);
 
+        // Calculate precise interval timing
         gettimeofday(&after, NULL);
         double elapsed = get_time_diff(&before, &after); // in ms
         double interval_ms = (ping->interval > 0 ? ping->interval : 1) * 1000.0;
+        
+        gettimeofday(&before, NULL); // Reset for next iteration
 
         // Handle timeout if specified
         if (ping->timeout > 0)

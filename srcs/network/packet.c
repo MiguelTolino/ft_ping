@@ -105,13 +105,12 @@ void receive_packet(t_ping *ping)
     struct icmphdr *icmp;
     ssize_t bytes_received;
     int retries = 0;
-    int max_retries = (strcmp(ping->ip, "127.0.0.1") == 0) ? 5 : 1;  // Increased retries for localhost
+    int max_retries = 2;  // Reduced retries for better performance
     const size_t min_packet_size = sizeof(struct iphdr) + sizeof(struct icmphdr);
-
 
     while (retries < max_retries)
     {
-        // Receive response
+        // Receive response with optimized parameters
         bytes_received = recvfrom(ping->sockfd, packet, MAX_PACKET_SIZE, 0,
                                  (struct sockaddr *)&from, &fromlen);
 
@@ -122,7 +121,7 @@ void receive_packet(t_ping *ping)
                 retries++;
                 if (retries < max_retries)
                 {
-                    usleep(100000);  // Sleep 100ms between retries
+                    usleep(500);  // Reduced sleep to 0.5ms for low RTT
                     continue;
                 }
                 return;
@@ -160,12 +159,19 @@ void receive_packet(t_ping *ping)
         // Note: We don't validate sequence number here since responses may arrive out of order
         // The timing will still be accurate for the actual round-trip time
 
-        // Capture end time only after validating this is our packet
+        // Capture end time immediately after successful receive
         gettimeofday(&end_time, NULL);
 
-        // Extract the original timestamp from the packet payload
+        // Extract the original timestamp from the packet payload  
         struct timeval *packet_timestamp = (struct timeval *)(packet + (ip->ihl << 2) + sizeof(struct icmphdr));
         double time_diff = get_time_diff(packet_timestamp, &end_time);
+        
+        // Validate reasonable RTT range to filter out timing anomalies
+        if (time_diff < 0.001 || time_diff > 60000.0) // 1μs to 60s range
+        {
+            retries++;
+            continue;
+        }
 
 
         // Update statistics

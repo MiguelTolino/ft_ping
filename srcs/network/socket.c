@@ -3,37 +3,36 @@
 
 void setup_socket(t_ping *ping)
 {
-    int opt = 1;
 
     // Create raw socket for ICMP
     if ((ping->sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)) < 0)
         error_exit("socket creation failed");
 
-    // Set socket options
-    if (setsockopt(ping->sockfd, SOL_SOCKET, SO_RCVBUF, &opt, sizeof(opt)) < 0)
-        error_exit("setsockopt SO_RCVBUF failed");
 
     // Set TTL
     if (setsockopt(ping->sockfd, IPPROTO_IP, IP_TTL, &ping->ttl,
                    sizeof(ping->ttl)) < 0)
         error_exit("setsockopt IP_TTL failed");
 
-    // Set receive timeout
+    // Optimize socket buffer sizes for better performance
+    int buffer_size = 65536;
+    if (setsockopt(ping->sockfd, SOL_SOCKET, SO_RCVBUF, &buffer_size, sizeof(buffer_size)) < 0)
+        error_exit("setsockopt SO_RCVBUF failed");
+    if (setsockopt(ping->sockfd, SOL_SOCKET, SO_SNDBUF, &buffer_size, sizeof(buffer_size)) < 0)
+        error_exit("setsockopt SO_SNDBUF failed");
+
+    // Set balanced receive timeout for performance and reliability  
     struct timeval tv;
-    // Use shorter timeout for localhost
-    if (strcmp(ping->ip, "127.0.0.1") == 0)
-    {
-        tv.tv_sec = 0;
-        tv.tv_usec = 100000;  // 100ms for localhost
-    }
-    else
-    {
-        tv.tv_sec = 0;  // Short timeout for remote hosts to avoid interference
-        tv.tv_usec = 100000;  // 100ms timeout
-    }
+    tv.tv_sec = 1;
+    tv.tv_usec = 0;  // 1s timeout for reliable packet reception
     
     if (setsockopt(ping->sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0)
         error_exit("setsockopt SO_RCVTIMEO failed");
+
+    // Enable socket timestamp for precise timing
+    int timestamp_flag = 1;
+    if (setsockopt(ping->sockfd, SOL_SOCKET, SO_TIMESTAMP, &timestamp_flag, sizeof(timestamp_flag)) < 0)
+        error_exit("setsockopt SO_TIMESTAMP failed");
 
     // Keep socket in blocking mode for accurate timing
     // Non-blocking mode can interfere with RTT measurement
