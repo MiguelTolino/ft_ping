@@ -28,17 +28,13 @@ void setup_socket(t_ping *ping)
     }
     else
     {
-        tv.tv_sec = 1;  // 1 second for remote hosts
-        tv.tv_usec = 0;
+        tv.tv_sec = 0;  // Short timeout for remote hosts to avoid interference
+        tv.tv_usec = 100000;  // 100ms timeout
     }
     
     if (setsockopt(ping->sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0)
         error_exit("setsockopt SO_RCVTIMEO failed");
 
-    // Set non-blocking mode
-    int flags = fcntl(ping->sockfd, F_GETFL, 0);
-    if (flags < 0)
-        error_exit("fcntl F_GETFL failed");
-    if (fcntl(ping->sockfd, F_SETFL, flags | O_NONBLOCK) < 0)
-        error_exit("fcntl F_SETFL failed");
+    // Keep socket in blocking mode for accurate timing
+    // Non-blocking mode can interfere with RTT measurement
 } 
