@@ -2,19 +2,6 @@
 
 A recreation of the Linux ping command in C. This project implements the core functionality of the ping utility, allowing users to test network connectivity by sending ICMP ECHO_REQUEST packets to network hosts.
 
-## ✨ Features
-
-- 📡 Send ICMP ECHO_REQUEST packets to network hosts
-- 📊 Display round-trip time statistics including min/avg/max/stddev
-- ⚙️ Support for various command-line options:
-  - `-c`: Stop after sending count packets
-  - `-t`: Set the IP Time To Live (default: 64)
-  - `-w`: Set timeout in seconds
-  - `-i`: Set interval between packets in seconds (default: 1)
-  - `-v`: Verbose output
-  - `-V`: Display version information
-  - `-?`: Display help message
-
 ## 🛠️ Installation
 
 ### 📋 Prerequisites
@@ -78,14 +65,6 @@ ft_ping -v 8.8.8.8
 # Display version
 ft_ping -V
 ```
-
-## 📦 Packet Details
-
-- Default packet size: 64 bytes (56 bytes data + 8 bytes ICMP header)
-- Maximum packet size: 65507 bytes (for receiving responses)
-- Default TTL: 64
-- Default interval: 1 second
-- Default timeout: None (runs until interrupted)
 
 ## 🧪 Testing
 
