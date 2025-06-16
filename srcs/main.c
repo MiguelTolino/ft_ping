@@ -205,11 +205,6 @@ void run_ping_loop(t_ping *ping)
         // Check count limit
         if (ping->count > 0 && ping->packets_sent >= ping->count)
         {
-            // Wait for the last packet's response before exiting
-            if (ping->packets_sent == ping->count)
-            {
-                receive_packet(ping);
-            }
             print_statistics(ping);
             cleanup_ping(ping);
             exit(0);
