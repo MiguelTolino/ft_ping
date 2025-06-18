@@ -27,7 +27,7 @@ typedef struct s_ping_args {
     char        *host;
     int         ttl;
     int         count;
-    int         interval;
+    double      interval;
     int         timeout;
     int         verbose;
 } t_ping_args;
@@ -38,7 +38,7 @@ typedef struct s_ping {
     int         sockfd;
     int         ttl;
     int         count;
-    int         interval;
+    double      interval;
     int         timeout;
     int         verbose;
     int         quiet;

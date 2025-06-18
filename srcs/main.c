@@ -119,7 +119,7 @@ static int validate_timeout(t_ping_args *args, int value)
     return (0);
 }
 
-static int validate_interval(t_ping_args *args, int value)
+static int validate_interval(t_ping_args *args, double value)
 {
     if (value <= 0)
     {
@@ -139,7 +139,7 @@ int validate_arguments(int argc, char **argv, t_ping_args *args)
     memset(args, 0, sizeof(t_ping_args));
     args->ttl = 64;
     args->count = -1;
-    args->interval = 1;
+    args->interval = 1.0;
     args->timeout = 0;
     args->verbose = 0;
     
@@ -169,7 +169,7 @@ int validate_arguments(int argc, char **argv, t_ping_args *args)
                     return (1);
                 break;
             case 'i':
-                if (validate_interval(args, atoi(optarg)))
+                if (validate_interval(args, atof(optarg)))
                     return (1);
                 break;
             case '?':
@@ -198,7 +198,7 @@ int validate_arguments(int argc, char **argv, t_ping_args *args)
 void run_ping_loop(t_ping *ping)
 {
     struct timeval start_time, loop_start, after_receive;
-    double interval_ms = (ping->interval > 0 ? ping->interval : 1) * 1000.0;
+    double interval_ms = (ping->interval > 0.0 ? ping->interval : 1.0) * 1000.0;
     
     // Guardar el tiempo de inicio global
     gettimeofday(&start_time, NULL);
