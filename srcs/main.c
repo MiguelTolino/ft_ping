@@ -197,9 +197,12 @@ int validate_arguments(int argc, char **argv, t_ping_args *args)
 
 void run_ping_loop(t_ping *ping)
 {
-    struct timeval loop_start, after_receive;
+    struct timeval start_time, loop_start, after_receive;
     double interval_ms = (ping->interval > 0 ? ping->interval : 1) * 1000.0;
     
+    // Guardar el tiempo de inicio global
+    gettimeofday(&start_time, NULL);
+
     while (1)
     {
         // Check count limit
@@ -234,7 +237,7 @@ void run_ping_loop(t_ping *ping)
         {
             struct timeval current_time;
             gettimeofday(&current_time, NULL);
-            double total_elapsed = get_time_diff(&loop_start, &current_time);
+            double total_elapsed = get_time_diff(&start_time, &current_time);
             double timeout_ms = ping->timeout * 1000.0;
 
             if (total_elapsed >= timeout_ms)

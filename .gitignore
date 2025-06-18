@@ -33,3 +33,4 @@ logs/
 *.temp
 
 build/
+.claude/
