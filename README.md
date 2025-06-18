@@ -51,7 +51,7 @@ ft_ping google.com
 ft_ping -c 5 8.8.8.8
 
 # Set TTL to 32
-ft_ping -t 32 google.com
+ft_ping --ttl 32 google.com
 
 # Set timeout to 5 seconds
 ft_ping -w 5 google.com

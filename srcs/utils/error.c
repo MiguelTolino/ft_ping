@@ -15,7 +15,7 @@ void print_usage(void)
         "  -v, --verbose    Verbose output\n"
         "  -V, --version    Display version information\n"
         "  -c, --count N    Stop after sending N packets\n"
-        "  -t, --ttl N      Set TTL to N\n"
+        "      --ttl N      Set TTL to N\n"
         "  -w, --timeout N  Stop after N seconds\n"
         "  -i, --interval N Wait N seconds between sending each packet\n"
         "  -?, --help       Display this help message\n\n"

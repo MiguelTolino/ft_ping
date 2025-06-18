@@ -36,8 +36,8 @@ This guide provides a comprehensive set of test cases to verify the functionalit
    - Program exits after 3 packets
    - Final statistics are displayed
 
-#### 2.2 TTL Option (-t)
-1. Run: `sudo ./ft_ping -t 32 localhost`
+#### 2.2 TTL Option (--ttl)
+1. Run: `sudo ./ft_ping --ttl 32 localhost`
 2. Verify:
    - TTL value is set to 32
    - Packets are sent and received
@@ -109,7 +109,7 @@ This guide provides a comprehensive set of test cases to verify the functionalit
    - Timeout is properly handled
 
 #### 4.3 Multiple Options
-1. Run: `sudo ./ft_ping -c 2 -t 32 -i 1 localhost`
+1. Run: `sudo ./ft_ping -c 2 --ttl 32 -i 1 localhost`
 2. Verify:
    - All options work together correctly
    - No conflicts between options
@@ -162,8 +162,8 @@ For each test case below, run both commands and compare their output and behavio
 ##### 6.2.2 TTL Option
 1. Run:
    ```bash
-   sudo ./ft_ping -t 32 localhost
-   sudo ping -t 32 localhost
+   sudo ./ft_ping --ttl 32 localhost
+   sudo ping --ttl 32 localhost
    ```
 2. Compare:
    - TTL handling
