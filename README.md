@@ -54,7 +54,7 @@ ft_ping -c 5 8.8.8.8
 ft_ping -t 32 google.com
 
 # Set timeout to 5 seconds
-ft_ping -w 5 google.com # Require fixxxxx!!!!!
+ft_ping -w 5 google.com
 
 # Set interval between packets to 2 seconds
 ft_ping -i 2 google.com
