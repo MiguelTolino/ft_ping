@@ -191,9 +191,6 @@ void receive_packet(t_ping *ping)
         printf("%zd bytes from %s: icmp_seq=%d ttl=%d time=%.3f ms",
                bytes_received, ping->ip, icmp->un.echo.sequence, ip->ttl, time_diff);
         
-        if (ping->verbose)
-            printf(" id=0x%04x", icmp->un.echo.id);
-        
         printf("\n");
         return;
     }
