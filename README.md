@@ -6,11 +6,11 @@ A recreation of the Linux ping command in C. This project implements the core fu
 
 ### 📋 Prerequisites
 
-- 📦 Required packages:
+- 📦 Required packages (on Debian/Ubuntu):
 ```bash
-chmod +x install_dependencies.sh
-./install_dependencies.sh
-``` 
+sudo apt-get update
+sudo apt-get install -y build-essential gcc make iproute2
+```
 
 - 🛠️ GCC compiler
 - 🔧 Make
@@ -33,6 +33,25 @@ make
 3. Install (optional):
 ```bash
 sudo make install
+```
+
+### 🐳 Docker
+
+If you're on macOS or don't want to install dependencies locally, you can use Docker:
+
+1. Build the image:
+```bash
+docker build -t ft_ping .
+```
+
+2. Run with necessary capabilities for raw sockets:
+```bash
+docker run --rm --cap-add=NET_RAW ft_ping google.com
+```
+
+Or using docker-compose:
+```bash
+docker-compose run --rm ft_ping google.com
 ```
 
 ## 💻 Usage

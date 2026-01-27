@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  ft_ping:
+    build: .
+    container_name: ft_ping
+    cap_add:
+      - NET_RAW
+    # This keeps the container alive if you want to exec into it
+    # command: tail -f /dev/null 
+    network_mode: host # Useful if you want to test against local network specifically
