@@ -1,5 +1,5 @@
 # Stage 1: Builder
-FROM debian:bullseye AS builder
+FROM ubuntu:22.04 AS builder
 
 # Install build-essential and make to compile the project
 RUN apt-get update && apt-get install -y \
@@ -18,7 +18,7 @@ COPY . .
 RUN make
 
 # Stage 2: Runtime
-FROM debian:bullseye-slim
+FROM ubuntu:22.04
 
 # Install runtime dependencies and useful network tools for testing/debugging
 # - iproute2: for 'ip' command
